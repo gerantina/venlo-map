@@ -29,50 +29,65 @@
 
     <!-- Insert your data here -->
 
-    <script>
-        var map = L.map('map').setView([51.3703, 6.1724], 12);
+<script>
+    var map = L.map('map_8b0eaa4e221a009285b03f9d7c3d727b').setView([51.3703, 6.1724], 12);
 
-        // Load tile layer
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19
-        }).addTo(map);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
 
-        // Initial popup contents (for default parameter and time)
-        var marker1 = L.marker([51.36961111111111, 6.170222222222223]).addTo(map);
-        var marker2 = L.marker([51.367333333333335, 6.16375]).addTo(map);
-        var marker3 = L.marker([51.35458333333334, 6.154138888888889]).addTo(map);
+    var marker1 = L.marker([51.36961111111111, 6.170222222222223]).addTo(map);
+    var marker2 = L.marker([51.367333333333335, 6.16375]).addTo(map);
+    var marker3 = L.marker([51.35458333333334, 6.154138888888889]).addTo(map);
 
-        // Function to update marker popups
-        function updateMarkers(parameter, time) {
-            // Extract values for each marker based on parameter and time
-            var value1 = data1.find(d => d.time == time)[parameter] || 'No data';
-            var value2 = data2.find(d => d.time == time)[parameter] || 'No data';
-            var value3 = data3.find(d => d.time == time)[parameter] || 'No data';
+    function updateMarkers(parameter, time) {
+        // Load and parse CSV files from GitHub
+        Papa.parse('https://yourusername.github.io/venlo-map/df1.csv', {
+            download: true,
+            header: true,
+            complete: function(results1) {
+                Papa.parse('https://yourusername.github.io/venlo-map/df2.csv', {
+                    download: true,
+                    header: true,
+                    complete: function(results2) {
+                        Papa.parse('https://yourusername.github.io/venlo-map/df4.csv', {
+                            download: true,
+                            header: true,
+                            complete: function(results3) {
+                                var value1 = results1.data.find(d => d.time == time);
+                                var value2 = results2.data.find(d => d.time == time);
+                                var value3 = results3.data.find(d => d.time == time);
 
-            // Update popups with the selected parameter value
-            marker1.setPopupContent(`${parameter}: ${value1}`).openPopup();
-            marker2.setPopupContent(`${parameter}: ${value2}`).openPopup();
-            marker3.setPopupContent(`${parameter}: ${value3}`).openPopup();
-        }
+                                var content1 = value1 ? `${parameter}: ${value1[parameter]}` : 'No data';
+                                var content2 = value2 ? `${parameter}: ${value2[parameter]}` : 'No data';
+                                var content3 = value3 ? `${parameter}: ${value3[parameter]}` : 'No data';
 
-        // Event listener for parameter selection
-        $('#parameter-select').on('change', function() {
-            var selectedParam = $(this).val();
-            var selectedTime = $('#time-slider').val();
-            updateMarkers(selectedParam, selectedTime);
+                                marker1.setPopupContent(content1).openPopup();
+                                marker2.setPopupContent(content2).openPopup();
+                                marker3.setPopupContent(content3).openPopup();
+                            }
+                        });
+                    }
+                });
+            }
         });
+    }
 
-        // Event listener for time slider
-        $('#time-slider').on('input', function() {
-            var selectedTime = $(this).val();
-            $('#time-value').text("Time: " + selectedTime);
-            var selectedParam = $('#parameter-select').val();
-            updateMarkers(selectedParam, selectedTime);
-        });
+    document.getElementById('parameter-select').addEventListener('change', function() {
+        var selectedParam = this.value;
+        var selectedTime = document.getElementById('time-slider').value;
+        updateMarkers(selectedParam, selectedTime);
+    });
 
-        // Initial map load with default parameter and time
-        updateMarkers('temperature', 0);
-    </script>
+    document.getElementById('time-slider').addEventListener('input', function() {
+        var selectedTime = this.value;
+        document.getElementById('time-value').textContent = "Time: " + selectedTime;
+        var selectedParam = document.getElementById('parameter-select').value;
+        updateMarkers(selectedParam, selectedTime);
+    });
+
+    updateMarkers('temperature', 0);
+</script>
 </body>
 </html>
 
