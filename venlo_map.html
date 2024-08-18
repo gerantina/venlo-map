@@ -3,8 +3,9 @@
 <head>
     <!-- Include necessary libraries -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 </head>
 <body>
     <!-- Dropdown for parameter selection -->
@@ -27,21 +28,21 @@
     <!-- Map container -->
     <div id="map" style="height: 600px;"></div>
 
-    <!-- Insert your data here -->
-
 <script>
-    var map = L.map('map_8b0eaa4e221a009285b03f9d7c3d727b').setView([51.3703, 6.1724], 12);
+    // Initialize the map
+    var map = L.map('map').setView([51.3703, 6.1724], 12);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19
     }).addTo(map);
 
+    // Define markers
     var marker1 = L.marker([51.36961111111111, 6.170222222222223]).addTo(map);
     var marker2 = L.marker([51.367333333333335, 6.16375]).addTo(map);
     var marker3 = L.marker([51.35458333333334, 6.154138888888889]).addTo(map);
 
+    // Function to update markers based on selected parameter and time
     function updateMarkers(parameter, time) {
-        // Load and parse CSV files from GitHub
         Papa.parse('https://yourusername.github.io/venlo-map/df1.csv', {
             download: true,
             header: true,
@@ -54,10 +55,12 @@
                             download: true,
                             header: true,
                             complete: function(results3) {
+                                // Find the data for the selected time
                                 var value1 = results1.data.find(d => d.time == time);
                                 var value2 = results2.data.find(d => d.time == time);
                                 var value3 = results3.data.find(d => d.time == time);
 
+                                // Update marker popups
                                 var content1 = value1 ? `${parameter}: ${value1[parameter]}` : 'No data';
                                 var content2 = value2 ? `${parameter}: ${value2[parameter]}` : 'No data';
                                 var content3 = value3 ? `${parameter}: ${value3[parameter]}` : 'No data';
@@ -73,6 +76,7 @@
         });
     }
 
+    // Event listeners for parameter selection and time slider
     document.getElementById('parameter-select').addEventListener('change', function() {
         var selectedParam = this.value;
         var selectedTime = document.getElementById('time-slider').value;
@@ -86,6 +90,7 @@
         updateMarkers(selectedParam, selectedTime);
     });
 
+    // Initial marker update
     updateMarkers('temperature', 0);
 </script>
 </body>
