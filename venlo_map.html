@@ -41,11 +41,11 @@
     var marker2 = L.marker([51.367333333333335, 6.16375]).addTo(map);
     var marker3 = L.marker([51.35458333333334, 6.154138888888889]).addTo(map);
 
-    function updateMarkers(parameter, time) {
+function updateMarkers(parameter, time) {
     console.log(`Fetching data for parameter: ${parameter}, time: ${time}`);
     
-    // Convert time to match the format in the CSV files if necessary
-    var formattedTime = time.toString().padStart(2, '0') + ":00"; // Converts 0 to "00:00", 6 to "06:00"
+    // Adjust this formatting based on the exact format in your CSV files
+    var formattedTime = time + ":00"; // This assumes times like "7:00", "15:00", etc.
 
     Papa.parse('https://gerantina.github.io/venlo-map/df1.csv', {
         download: true,
@@ -93,6 +93,7 @@
         }
     });
 }
+
 
     // Event listeners for parameter selection and time slider
     document.getElementById('parameter-select').addEventListener('change', function() {
