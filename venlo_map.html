@@ -1,65 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <script>
-        L_NO_TOUCH = false;
-        L_DISABLE_3D = false;
-    </script>
-    <style>html, body {width: 100%; height: 100%; margin: 0; padding: 0;}</style>
-    <style>#map {position:absolute; top:0; bottom:0; right:0; left:0;}</style>
+    <!-- Include necessary libraries -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <style>
-        #map_8b0eaa4e221a009285b03f9d7c3d727b {
-            position: relative;
-            width: 100.0%;
-            height: 100.0%;
-            left: 0.0%;
-            top: 0.0%;
-        }
-        .leaflet-container { font-size: 1rem; }
-    </style>
 </head>
 <body>
-    <div class="folium-map" id="map_8b0eaa4e221a009285b03f9d7c3d727b" ></div>
-</body>
-<script>
-    var map_8b0eaa4e221a009285b03f9d7c3d727b = L.map("map_8b0eaa4e221a009285b03f9d7c3d727b", {
-        center: [51.3703, 6.1724],
-        crs: L.CRS.EPSG3857,
-        zoom: 12,
-        zoomControl: true,
-        preferCanvas: false,
-    });
-    var tile_layer_a67b9b621acbc460e3f8bfce6403916a = L.tileLayer(
-        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-            "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
-            "detectRetina": false,
-            "maxNativeZoom": 19,
-            "maxZoom": 19,
-            "minZoom": 0,
-            "noWrap": false,
-            "opacity": 1,
-            "subdomains": "abc",
-            "tms": false
+    <!-- Dropdown for parameter selection -->
+    <div class="container mt-3">
+        <label for="parameter-select">Select Parameter:</label>
+        <select id="parameter-select" class="form-select" aria-label="Parameter select">
+            <option value="temperature">Temperature</option>
+            <option value="humidity">Humidity</option>
+            <!-- Add more options as needed -->
+        </select>
+    </div>
+
+    <!-- Slider for time selection -->
+    <div class="container mt-3">
+        <label for="time-slider">Select Time:</label>
+        <input type="range" id="time-slider" min="0" max="23" step="1" class="form-range">
+        <span id="time-value">Time: 0</span>
+    </div>
+
+    <!-- Map container -->
+    <div id="map" style="height: 600px;"></div>
+
+    <!-- Insert your data here -->
+
+    <script>
+        var map = L.map('map').setView([51.3703, 6.1724], 12);
+
+        // Load tile layer
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19
+        }).addTo(map);
+
+        // Initial popup contents (for default parameter and time)
+        var marker1 = L.marker([51.36961111111111, 6.170222222222223]).addTo(map);
+        var marker2 = L.marker([51.367333333333335, 6.16375]).addTo(map);
+        var marker3 = L.marker([51.35458333333334, 6.154138888888889]).addTo(map);
+
+        // Function to update marker popups
+        function updateMarkers(parameter, time) {
+            // Extract values for each marker based on parameter and time
+            var value1 = data1.find(d => d.time == time)[parameter] || 'No data';
+            var value2 = data2.find(d => d.time == time)[parameter] || 'No data';
+            var value3 = data3.find(d => d.time == time)[parameter] || 'No data';
+
+            // Update popups with the selected parameter value
+            marker1.setPopupContent(`${parameter}: ${value1}`).openPopup();
+            marker2.setPopupContent(`${parameter}: ${value2}`).openPopup();
+            marker3.setPopupContent(`${parameter}: ${value3}`).openPopup();
         }
-    );
-    tile_layer_a67b9b621acbc460e3f8bfce6403916a.addTo(map_8b0eaa4e221a009285b03f9d7c3d727b);
-    var marker_0bf5074f2ad5af5a89bc93f288df26d7 = L.marker([51.3703, 6.1724], {}).addTo(map_8b0eaa4e221a009285b03f9d7c3d727b);
-    var popup_b98c5c31552eac5065299ccadbe2b183 = L.popup({"maxWidth": "100%"});
-    var html_a2a85af449b9a8ca78f7558bf3475baf = $(`<div id="html_a2a85af449b9a8ca78f7558bf3475baf" style="width: 100.0%; height: 100.0%;">Venlo</div>`)[0];
-    popup_b98c5c31552eac5065299ccadbe2b183.setContent(html_a2a85af449b9a8ca78f7558bf3475baf);
-    marker_0bf5074f2ad5af5a89bc93f288df26d7.bindPopup(popup_b98c5c31552eac5065299ccadbe2b183);
-</script>
+
+        // Event listener for parameter selection
+        $('#parameter-select').on('change', function() {
+            var selectedParam = $(this).val();
+            var selectedTime = $('#time-slider').val();
+            updateMarkers(selectedParam, selectedTime);
+        });
+
+        // Event listener for time slider
+        $('#time-slider').on('input', function() {
+            var selectedTime = $(this).val();
+            $('#time-value').text("Time: " + selectedTime);
+            var selectedParam = $('#parameter-select').val();
+            updateMarkers(selectedParam, selectedTime);
+        });
+
+        // Initial map load with default parameter and time
+        updateMarkers('temperature', 0);
+    </script>
+</body>
 </html>
+
