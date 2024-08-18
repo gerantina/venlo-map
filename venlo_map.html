@@ -41,56 +41,58 @@
     var marker2 = L.marker([51.367333333333335, 6.16375]).addTo(map);
     var marker3 = L.marker([51.35458333333334, 6.154138888888889]).addTo(map);
 
-    // Function to update markers based on selected parameter and time
     function updateMarkers(parameter, time) {
-        console.log(`Fetching data for parameter: ${parameter}, time: ${time}`);
-        
-        Papa.parse('https://gerantina.github.io/venlo-map/df1.csv', {
-            download: true,
-            header: true,
-            complete: function(results1) {
-                console.log("Results 1:", results1.data);
+    console.log(`Fetching data for parameter: ${parameter}, time: ${time}`);
+    
+    // Convert time to match the format in the CSV files if necessary
+    var formattedTime = time.toString().padStart(2, '0') + ":00"; // Converts 0 to "00:00", 6 to "06:00"
 
-                Papa.parse('https://gerantina.github.io/venlo-map/df2.csv', {
-                    download: true,
-                    header: true,
-                    complete: function(results2) {
-                        console.log("Results 2:", results2.data);
+    Papa.parse('https://gerantina.github.io/venlo-map/df1.csv', {
+        download: true,
+        header: true,
+        complete: function(results1) {
+            console.log("Results 1:", results1.data);
 
-                        Papa.parse('https://gerantina.github.io/venlo-map/df4.csv', {
-                            download: true,
-                            header: true,
-                            complete: function(results3) {
-                                console.log("Results 3:", results3.data);
+            Papa.parse('https://gerantina.github.io/venlo-map/df2.csv', {
+                download: true,
+                header: true,
+                complete: function(results2) {
+                    console.log("Results 2:", results2.data);
 
-                                // Find the data for the selected time
-                                var value1 = results1.data.find(d => d.time == time);
-                                var value2 = results2.data.find(d => d.time == time);
-                                var value3 = results3.data.find(d => d.time == time);
+                    Papa.parse('https://gerantina.github.io/venlo-map/df4.csv', {
+                        download: true,
+                        header: true,
+                        complete: function(results3) {
+                            console.log("Results 3:", results3.data);
 
-                                console.log("Value 1:", value1);
-                                console.log("Value 2:", value2);
-                                console.log("Value 3:", value3);
+                            // Find the data for the selected time
+                            var value1 = results1.data.find(d => d.time == formattedTime);
+                            var value2 = results2.data.find(d => d.time == formattedTime);
+                            var value3 = results3.data.find(d => d.time == formattedTime);
 
-                                if (!value1) console.error(`No matching data for time: ${time} in df1.csv`);
-                                if (!value2) console.error(`No matching data for time: ${time} in df2.csv`);
-                                if (!value3) console.error(`No matching data for time: ${time} in df4.csv`);
+                            console.log("Value 1:", value1);
+                            console.log("Value 2:", value2);
+                            console.log("Value 3:", value3);
 
-                                // Update marker popups
-                                var content1 = value1 ? `${parameter}: ${value1[parameter]}` : 'No data';
-                                var content2 = value2 ? `${parameter}: ${value2[parameter]}` : 'No data';
-                                var content3 = value3 ? `${parameter}: ${value3[parameter]}` : 'No data';
+                            if (!value1) console.error(`No matching data for time: ${formattedTime} in df1.csv`);
+                            if (!value2) console.error(`No matching data for time: ${formattedTime} in df2.csv`);
+                            if (!value3) console.error(`No matching data for time: ${formattedTime} in df4.csv`);
 
-                                marker1.setPopupContent(content1).openPopup();
-                                marker2.setPopupContent(content2).openPopup();
-                                marker3.setPopupContent(content3).openPopup();
-                            }
-                        });
-                    }
-                });
-            }
-        });
-    }
+                            // Update marker popups
+                            var content1 = value1 ? `${parameter}: ${value1[parameter]}` : 'No data';
+                            var content2 = value2 ? `${parameter}: ${value2[parameter]}` : 'No data';
+                            var content3 = value3 ? `${parameter}: ${value3[parameter]}` : 'No data';
+
+                            marker1.setPopupContent(content1).openPopup();
+                            marker2.setPopupContent(content2).openPopup();
+                            marker3.setPopupContent(content3).openPopup();
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
 
     // Event listeners for parameter selection and time slider
     document.getElementById('parameter-select').addEventListener('change', function() {
