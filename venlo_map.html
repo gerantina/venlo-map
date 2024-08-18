@@ -72,6 +72,10 @@
                                 console.log("Value 2:", value2);
                                 console.log("Value 3:", value3);
 
+                                if (!value1) console.error(`No matching data for time: ${time} in df1.csv`);
+                                if (!value2) console.error(`No matching data for time: ${time} in df2.csv`);
+                                if (!value3) console.error(`No matching data for time: ${time} in df4.csv`);
+
                                 // Update marker popups
                                 var content1 = value1 ? `${parameter}: ${value1[parameter]}` : 'No data';
                                 var content2 = value2 ? `${parameter}: ${value2[parameter]}` : 'No data';
@@ -105,6 +109,7 @@
     // Initial marker update
     updateMarkers('temperature', 0);
 </script>
+
 
 </body>
 </html>
