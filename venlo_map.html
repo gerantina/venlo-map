@@ -43,22 +43,34 @@
 
     // Function to update markers based on selected parameter and time
     function updateMarkers(parameter, time) {
+        console.log(`Fetching data for parameter: ${parameter}, time: ${time}`);
+        
         Papa.parse('https://gerantina.github.io/venlo-map/df1.csv', {
             download: true,
             header: true,
             complete: function(results1) {
+                console.log("Results 1:", results1.data);
+
                 Papa.parse('https://gerantina.github.io/venlo-map/df2.csv', {
                     download: true,
                     header: true,
                     complete: function(results2) {
+                        console.log("Results 2:", results2.data);
+
                         Papa.parse('https://gerantina.github.io/venlo-map/df4.csv', {
                             download: true,
                             header: true,
                             complete: function(results3) {
+                                console.log("Results 3:", results3.data);
+
                                 // Find the data for the selected time
                                 var value1 = results1.data.find(d => d.time == time);
                                 var value2 = results2.data.find(d => d.time == time);
                                 var value3 = results3.data.find(d => d.time == time);
+
+                                console.log("Value 1:", value1);
+                                console.log("Value 2:", value2);
+                                console.log("Value 3:", value3);
 
                                 // Update marker popups
                                 var content1 = value1 ? `${parameter}: ${value1[parameter]}` : 'No data';
@@ -93,6 +105,7 @@
     // Initial marker update
     updateMarkers('temperature', 0);
 </script>
+
 </body>
 </html>
 
